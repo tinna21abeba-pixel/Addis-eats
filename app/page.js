@@ -15,9 +15,9 @@ export default function HomePage() {
   const moreDishes = dishes.filter((d) => !d.popular).slice(0, 3);
 
   return (
-    <div className="bg-white">
+    <div className=" bg-white ">
       {/* Hero Section */}
-      <section className="relative isolate overflow-hidden border-b border-gray-100 bg-white">
+      <section className=" relative isolate overflow-hidden border-b border-gray-100 bg-white">
         
         <SmartImage
           src="https://tse3.mm.bing.net/th/id/OIP.jVMTts7fOWeg750kJ7q8OwHaFW?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
@@ -30,9 +30,7 @@ export default function HomePage() {
 
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 pb-12 pt-16 lg:grid-cols-[1.05fr_1fr] lg:pt-24">
           <div>
-            <p className="hero-rise text-xs font-bold tracking-[0.25em] text-amber-700">
-              TRADITIONAL · FRESH · AUTHENTIC
-            </p>
+            
             <h1 className="hero-rise hero-rise-2 mt-4 font-display text-5xl font-bold tracking-tight text-gray-950 sm:text-6xl lg:text-7xl">
               Addis <span className="text-amber-600">Eats</span>
             </h1>
@@ -59,7 +57,7 @@ export default function HomePage() {
           </div>
 
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-            {/* Hero plate with circular inner shadow */}
+       
             <div className="relative aspect-square w-full overflow-hidden rounded-full border-4 border-amber-500 shadow-xl">
               <SmartImage
                 src="/images/hero-plate.jpg"
@@ -73,8 +71,8 @@ export default function HomePage() {
               />
             </div>
             <div className="absolute -bottom-2 right-2 rounded-2xl border border-gray-200 bg-white/95 px-5 py-3 shadow-lg backdrop-blur sm:right-6">
-              <p className="font-display text-lg font-bold text-amber-700">Doro Wat</p>
-              <p className="text-xs font-medium text-gray-500">Ethiopia&apos;s national dish</p>
+              <p className="font-display text-lg font-bold text-amber-700">Ethiopia&apos;s national dish</p>
+             
             </div>
           </div>
         </div>
@@ -95,7 +93,7 @@ export default function HomePage() {
         </ul>
       </section>
 
-      {/* Popular Dishes + Cart Sidebar Section */}
+    
       <section className="mx-auto max-w-7xl px-5 py-14">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div>
@@ -118,7 +116,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Story Banner */}
+         
             <div className="relative mt-10 overflow-hidden rounded-2xl border border-gray-200 shadow-xs">
               <SmartImage
                 src="/images/story-food.jpg"
