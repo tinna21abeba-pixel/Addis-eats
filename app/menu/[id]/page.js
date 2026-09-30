@@ -1,56 +1,102 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import dishes from "../../data/dishes";
-import AddToCartButton from "../AddToCartButton";
+import dishes, { getDish } from "../../data/dishes";
+import SmartImage from "../../components/SmartImage";
+import DishCard, { SpiceLevel } from "../../components/DishCard";
+import { ClockIcon } from "../../components/Icons";
+import { formatETB } from "../../lib/format";
+import DishOrder from "./DishOrder";
 
 export async function generateStaticParams() {
-  return dishes.map((dish) => ({
-    id: dish.id.toString(),
-  }));
+  return dishes.map((dish) => ({ id: dish.id.toString() }));
+}
+
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const dish = getDish(id);
+  return dish ? { title: `${dish.name} | Addis Eats`, description: dish.description } : {};
 }
 
 export default async function DishDetails({ params }) {
   const { id } = await params;
+  const dish = getDish(id);
+  if (!dish) notFound();
 
-  const dish = dishes.find((dish) => dish.id.toString() === id);
-
-  if (!dish) {
-    notFound();
-  }
+  const related = dishes.filter((d) => d.category === dish.category && d.id !== dish.id).slice(0, 4);
 
   return (
-    <div className="max-w-4xl mx-auto flex items-center justify-center py-6">
-      <div className="w-full bg-zinc-900 rounded-2xl shadow-xl overflow-hidden border border-zinc-800 p-8">
-        <span className="inline-block bg-amber-500 text-white px-4 py-1 rounded-full text-sm mb-4 font-semibold">
-          {dish.category}
-        </span>
+    <div className="bg-white">
+      {/* Breadcrumb Navigation */}
+      <nav aria-label="Breadcrumb" className="text-sm font-medium text-gray-500">
+        <Link href="/menu" className="transition hover:text-amber-600">
+          Menu
+        </Link>{" "}
+        / <span className="text-gray-900">{dish.name}</span>
+      </nav>
 
-        <h1 className="text-4xl font-bold mb-4 text-white">
-          {dish.name}
-        </h1>
-
-        <p className="text-zinc-300 leading-7 mb-6">
-          {dish.description}
-        </p>
-
-        <h2 className="text-3xl font-bold text-amber-500 mb-8">
-          {dish.price} ETB
-        </h2>
-
-        <div className="flex gap-4">
-          <AddToCartButton
-            dish={dish}
-            className="flex-1 py-3 rounded-lg font-semibold text-white transition bg-amber-500 hover:bg-amber-600 text-center"
+      <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center">
+        {/* Dish image with inner gray shadow looking inside */}
+        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 shadow-md">
+          <SmartImage
+            src={dish.image}
+            alt={`${dish.name}, served on injera`}
+            priority
+            className="h-full w-full object-cover"
           />
+          {/* Gray inner shadow */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 rounded-2xl dish-inner-shadow"
+          />
+        </div>
 
-          <Link
-            href="/menu"
-            className="flex-1 text-center bg-zinc-800 hover:bg-zinc-700 transition py-3 rounded-lg font-semibold text-white border border-zinc-700"
-          >
-            Back to Menu
-          </Link>
+        <div className="self-center">
+          <span className="inline-block rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-700">
+            {dish.category}
+          </span>
+          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">
+            {dish.name}
+          </h1>
+          <p className="mt-1 text-xl font-medium text-amber-700" lang="am">
+            {dish.amharic}
+          </p>
+          <p className="mt-5 max-w-lg text-base leading-relaxed text-gray-600">
+            {dish.description}
+          </p>
+
+          <dl className="mt-6 flex flex-wrap gap-8 border-y border-gray-100 py-4 text-sm">
+            <div>
+              <dt className="font-medium text-gray-500">Spice Level</dt>
+              <dd className="mt-1">
+                <SpiceLevel level={dish.spice} />
+              </dd>
+            </div>
+            <div>
+              <dt className="font-medium text-gray-500">Preparation Time</dt>
+              <dd className="mt-1 flex items-center gap-1.5 font-medium text-gray-800">
+                <ClockIcon width={16} height={16} className="text-amber-600" />
+                {dish.prep}
+              </dd>
+            </div>
+          </dl>
+
+          <p className="mt-6 font-display text-3xl font-bold text-amber-600">
+            {formatETB(dish.price)}
+          </p>
+          <DishOrder dish={dish} />
         </div>
       </div>
+
+      {related.length > 0 && (
+        <section className="mt-20 border-t border-gray-100 pt-12">
+          <h2 className="font-display text-3xl font-bold text-gray-900">You may also like</h2>
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {related.map((d) => (
+              <DishCard key={d.id} dish={d} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

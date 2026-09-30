@@ -2,16 +2,12 @@
 
 export default function Error({ error, reset }) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <h2 className="text-2xl font-bold text-white mb-2">
-        Something went wrong!
-      </h2>
-      <p className="text-zinc-400 mb-6 text-sm">
-        {error?.message || "Failed to load menu content."}
-      </p>
+    <div className="bg-white py-20 text-center">
+      <h2 className="font-display text-3xl font-bold text-gray-900">The menu didn&apos;t load</h2>
+      <p className="mt-2 text-sm text-gray-500">{error?.message || "Something went wrong while loading the menu."}</p>
       <button
         onClick={() => reset()}
-        className="px-6 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg font-semibold text-sm transition"
+        className="mt-6 rounded-full bg-amber-600 px-6 py-3 font-semibold text-white shadow-xs transition hover:bg-amber-700"
       >
         Try again
       </button>

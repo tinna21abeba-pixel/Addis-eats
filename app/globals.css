@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ink: #ffffff;
+  --color-page: #ffffff;
+  --color-panel: #ffffff;
+  --color-panel-2: #f9fafb;
+  --color-line: #e5e7eb;
+  --color-line-dark: #d1d5db;
+  --color-amber: #d97706;
+  --color-amber-deep: #b45309;
+  --color-amber-light: #fef3c7;
+  --color-cream: #111827;
+  --color-muted: #6b7280;
+  --font-sans: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-playfair), Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  background-color: #ffffff;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #ffffff;
+  color: #1f2937;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
+
+/* Gray shadow that looks inside (inner inset shadow) for dishes */
+.dish-inner-shadow {
+  box-shadow: inset 0 4px 12px rgba(75, 85, 99, 0.22), inset 0 -2px 6px rgba(75, 85, 99, 0.14);
+}
+
+/* Gray inset shadow for the dish cards */
+.dish-card-shadow {
+  box-shadow: inset 0 1px 3px rgba(156, 163, 175, 0.2), 0 2px 8px -1px rgba(0, 0, 0, 0.04);
+}
+
+/* Addis skyline pattern */
+.addis-skyline {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.25;
+  pointer-events: none;
+  background-image: 
+    url("https://tse3.mm.bing.net/th/id/OIP.jVMTts7fOWeg750kJ7q8OwHaFW?r=0&rs=1&pid=ImgDet&o=6&dpr=1&pid=ImgDet&rs=1&pc=r&o=7&cdv=1&dpr=1&pid=ImgDet&rs=1&pc=r&o=7&cdv=1");
+  background-size: cover;
+  background-position: center;
+  mask-image: 
+    linear-gradient(
+      to bottom,
+      black 60%,  /* Opaque on bottom for full coverage */
+      transparent 100%  /* Fade to transparent at top */
+    );
+  -webkit-mask-image: 
+    linear-gradient(
+      to bottom,
+      black 60%, 
+      transparent 100% 
+    );
+}
+
+
+/* Tibeb-inspired woven border, Ethiopian traditional textile trim */
+.tibeb {
+  height: 8px;
+  background:
+    repeating-linear-gradient(90deg, #d97706 0 12px, transparent 12px 16px),
+    repeating-linear-gradient(90deg, #dc2626 0 6px, #16a34a 6px 12px, #f59e0b 12px 18px);
+  background-size: 100% 3px, 100% 5px;
+  background-position: top, bottom;
+  background-repeat: no-repeat;
+  opacity: 0.95;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+.hero-rise { animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.hero-rise-2 { animation-delay: 0.12s; }
+.hero-rise-3 { animation-delay: 0.24s; }
