@@ -1,7 +1,5 @@
-import HomePage from "../page";
+import { redirect } from "next/navigation";
 
-export const metadata = {
-  title: "Welcome to Addis Eats",
-};
-
-export default HomePage;
+export default function HomePageRedirect() {
+  redirect("/");
+}

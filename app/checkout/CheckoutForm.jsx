@@ -1,184 +1,166 @@
 "use client";
 
+import { useActionState, useEffect } from "react";
 import Link from "next/link";
-import { useState } from "react";
 import { useCart } from "../context/CartContext";
-import SmartImage from "../components/SmartImage";
-import { ArrowIcon, CheckIcon } from "../components/Icons";
-import { formatETB } from "../lib/format";
+import { placeOrder } from "../actions/orders";
 
-const subCities = [
-  "Addis Ketema",
-  "Akaki Kaliti",
-  "Arada",
-  "Bole",
-  "Gullele",
-  "Kirkos",
-  "Kolfe Keranio",
-  "Lideta",
-  "Nifas Silk-Lafto",
-  "Yeka",
-  "Lemi Kura",
-];
+const inputClass =
+  "w-full bg-[#201d1b] border border-[#332e29] rounded-xl px-4 py-3 text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/50 text-sm transition-all";
 
-const payments = [
-  { id: "cash", label: "Cash on delivery" },
-  { id: "telebirr", label: "Telebirr" },
-  { id: "cbe", label: "CBE Birr" },
-];
-
-const fieldClass =
-  "mt-1.5 w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 transition focus:border-amber-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-amber-500";
+function FieldError({ errors }) {
+  if (!errors?.length) return null;
+  return <p className="text-rose-400 text-xs mt-1.5 flex items-center gap-1">{errors[0]}</p>;
+}
 
 export default function CheckoutForm() {
-  const { items, subtotal, delivery, total, clearCart, ready } = useCart();
-  const [placed, setPlaced] = useState(null);
+  const { items, clearCart } = useCart();
+  const [state, formAction, isPending] = useActionState(placeOrder, null);
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    setPlaced({
-      orderNo: `AE-${Date.now().toString().slice(-6)}`,
-      name: data.get("name"),
-      total,
-      lines: items.length,
-    });
-    clearCart();
-  };
+  useEffect(() => {
+    if (state?.ok) clearCart();
+  }, [state, clearCart]);
 
-  if (placed) {
+  if (state?.ok) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-md">
-        <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-amber-600 text-white shadow-xs">
-          <CheckIcon width={28} height={28} />
-        </span>
-        <h2 className="mt-5 font-display text-3xl font-bold text-gray-900">Thank you, {placed.name}!</h2>
-        <p className="mt-2 text-sm text-gray-600">
-          Order <span className="font-semibold text-gray-900">{placed.orderNo}</span> is confirmed. We will call you when our courier is on the way.
+      <div className="text-center py-6">
+        <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 mx-auto flex items-center justify-center mb-4">
+          <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 className="text-2xl font-bold text-white mb-2 font-serif-display">Order Confirmed!</h2>
+        <p className="text-zinc-300 text-sm mb-6">
+          Your order number is <span className="font-bold text-amber-400">{state.orderId}</span>. Our kitchen is now preparing your meal.
         </p>
-        <p className="mt-4 font-display text-2xl font-bold text-amber-600">{formatETB(placed.total)}</p>
         <Link
-          href="/menu"
-          className="mt-8 inline-flex items-center gap-2 rounded-full bg-amber-600 px-7 py-3.5 font-semibold text-white shadow-xs transition hover:bg-amber-700"
+          href="/orders"
+          className="inline-flex items-center gap-2 bg-[#e59e2a] hover:bg-[#d48e1d] transition px-7 py-3 rounded-full font-bold text-sm text-zinc-950 shadow-md shadow-amber-500/20"
         >
-          Order something else <ArrowIcon width={18} height={18} />
+          <span>View My Orders</span>
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
         </Link>
       </div>
     );
   }
-
-  if (!ready) return <div className="h-64 animate-pulse rounded-2xl bg-gray-100" />;
 
   if (items.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-gray-300 bg-gray-50/50 p-14 text-center">
-        <h2 className="font-display text-2xl font-bold text-gray-900">Nothing to check out yet</h2>
-        <p className="mt-2 text-sm text-gray-500">Add a dish to your cart first.</p>
+      <div className="text-center py-6">
+        <p className="text-zinc-400 text-sm mb-6">Your cart is empty.</p>
         <Link
           href="/menu"
-          className="mt-6 inline-block rounded-full bg-amber-600 px-7 py-3 font-semibold text-white shadow-xs transition hover:bg-amber-700"
+          className="inline-flex items-center gap-2 bg-[#e59e2a] hover:bg-[#d48e1d] transition px-7 py-3 rounded-full font-bold text-sm text-zinc-950 shadow-md shadow-amber-500/20"
         >
-          Browse the menu
+          <span>Browse Menu</span>
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
         </Link>
       </div>
     );
   }
 
-  return (
-    <form onSubmit={onSubmit} className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-      <div className="space-y-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-xs sm:p-8">
-        <fieldset className="grid gap-5 sm:grid-cols-2">
-          <legend className="mb-4 font-display text-2xl font-bold text-gray-900">Delivery details</legend>
-          <label className="text-sm font-semibold text-gray-700">
-            Full name
-            <input name="name" required autoComplete="name" placeholder="Abebe Kebede" className={fieldClass} />
-          </label>
-          <label className="text-sm font-semibold text-gray-700">
-            Phone number
-            <input
-              name="phone"
-              required
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              pattern="^(\+251|0)?9\d{8}$"
-              title="Ethiopian mobile number, e.g. 0911 234 567"
-              placeholder="0911 234 567"
-              className={fieldClass}
-            />
-          </label>
-          <label className="text-sm font-semibold text-gray-700">
-            Sub-city
-            <select name="subcity" required defaultValue="" className={fieldClass}>
-              <option value="" disabled>Choose sub-city</option>
-              {subCities.map((s) => (
-                <option key={s}>{s}</option>
-              ))}
-            </select>
-          </label>
-          <label className="text-sm font-semibold text-gray-700">
-            Street / landmark
-            <input name="address" required autoComplete="street-address" placeholder="Near Edna Mall, Bole" className={fieldClass} />
-          </label>
-          <label className="text-sm font-semibold text-gray-700 sm:col-span-2">
-            Delivery notes (optional)
-            <textarea name="notes" rows={3} placeholder="Gate code, floor, spice preference..." className={fieldClass} />
-          </label>
-        </fieldset>
+  const total = items.reduce((sum, i) => sum + i.price * (i.quantity || 1), 0);
+  const errors = state?.fieldErrors ?? {};
+  const v = state?.values ?? {};
 
-        <fieldset>
-          <legend className="mb-4 font-display text-2xl font-bold text-gray-900">Payment method</legend>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {payments.map((p, i) => (
-              <label
-                key={p.id}
-                className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium text-gray-800 transition has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50/70"
-              >
-                <input type="radio" name="payment" value={p.id} defaultChecked={i === 0} className="accent-amber-600" />
-                {p.label}
-              </label>
-            ))}
-          </div>
-        </fieldset>
+  const payload = JSON.stringify(
+    items.map((i) => ({ dishId: i.id, quantity: i.quantity || 1 }))
+  );
+
+  return (
+    <form action={formAction} className="flex flex-col gap-4 text-left">
+      <input type="hidden" name="items" value={payload} />
+
+      {state && !state.ok && (
+        <div className="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3">
+          <p>{state.message}</p>
+          <FieldError errors={errors.items} />
+        </div>
+      )}
+
+      <div>
+        <label htmlFor="name" className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
+          Full Name
+        </label>
+        <input
+          id="name"
+          name="name"
+          defaultValue={v.name}
+          className={inputClass}
+          placeholder="Abebe Kebede"
+        />
+        <FieldError errors={errors.name} />
       </div>
 
-      <aside className="h-fit rounded-2xl border border-gray-200 bg-gray-50/80 p-6 shadow-xs">
-        <h2 className="font-display text-2xl font-bold text-gray-900">Your order</h2>
-        <ul className="mt-4 divide-y divide-gray-200">
-          {items.map((item) => (
-            <li key={item.id} className="flex items-center gap-3 py-3">
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-white">
-                <SmartImage src={item.image} alt={item.name} className="h-full w-full object-cover" />
-                <div className="pointer-events-none absolute inset-0 dish-inner-shadow" />
-              </div>
-              <p className="flex-1 text-sm font-medium text-gray-900">
-                {item.name} <span className="text-xs text-gray-500">× {item.quantity}</span>
-              </p>
-              <p className="text-sm font-semibold text-gray-900">{formatETB(item.price * item.quantity)}</p>
-            </li>
-          ))}
-        </ul>
-        <dl className="mt-3 space-y-2 border-t border-gray-200 pt-4 text-sm">
-          <div className="flex justify-between">
-            <dt className="text-gray-600">Subtotal</dt>
-            <dd className="font-medium text-gray-900">{formatETB(subtotal)}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt className="text-gray-600">Delivery</dt>
-            <dd className="font-medium text-gray-900">{formatETB(delivery)}</dd>
-          </div>
-          <div className="flex justify-between pt-2 text-lg font-bold">
-            <dt className="text-gray-900">Total</dt>
-            <dd className="text-amber-600">{formatETB(total)}</dd>
-          </div>
-        </dl>
-        <button
-          type="submit"
-          className="mt-6 w-full rounded-full bg-amber-600 py-3.5 font-semibold text-white shadow-xs transition hover:bg-amber-700"
-        >
-          Place order
-        </button>
-      </aside>
+      <div>
+        <label htmlFor="phone" className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
+          Phone Number
+        </label>
+        <input
+          id="phone"
+          name="phone"
+          defaultValue={v.phone}
+          className={inputClass}
+          placeholder="0911234567"
+          inputMode="tel"
+        />
+        <FieldError errors={errors.phone} />
+      </div>
+
+      <div>
+        <label htmlFor="address" className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
+          Delivery Address
+        </label>
+        <input
+          id="address"
+          name="address"
+          defaultValue={v.address}
+          className={inputClass}
+          placeholder="Bole, Addis Ababa"
+        />
+        <FieldError errors={errors.address} />
+      </div>
+
+      <div>
+        <label htmlFor="note" className="block text-xs font-semibold uppercase tracking-wider text-zinc-400 mb-1.5">
+          Special Note (Optional)
+        </label>
+        <textarea
+          id="note"
+          name="note"
+          defaultValue={v.note}
+          rows={2}
+          className={inputClass}
+          placeholder="e.g. Extra spicy, call upon arrival"
+        />
+        <FieldError errors={errors.note} />
+      </div>
+
+      <div className="flex items-center justify-between pt-3 border-t border-[#2a2622]">
+        <span className="text-zinc-400 font-medium">Total Amount</span>
+        <span className="text-2xl font-bold text-amber-500">ETB {total}</span>
+      </div>
+
+      <button
+        type="submit"
+        disabled={isPending}
+        className="bg-[#e59e2a] hover:bg-[#d48e1d] disabled:opacity-60 disabled:cursor-not-allowed transition py-3 px-6 rounded-full font-bold text-zinc-950 shadow-md shadow-amber-500/20 text-sm mt-2 flex items-center justify-center gap-2"
+      >
+        {isPending ? (
+          <span>Placing Order...</span>
+        ) : (
+          <>
+            <span>Place Order</span>
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </>
+        )}
+      </button>
     </form>
   );
 }

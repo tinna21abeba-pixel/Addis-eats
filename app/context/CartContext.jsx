@@ -1,84 +1,46 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import dishes from "../data/dishes";
-import { DELIVERY_FEE } from "../lib/format";
+import { createContext, useContext, useState, useCallback, useMemo } from "react";
 
 export const CartContext = createContext(null);
-const STORAGE_KEY = "addis-eats-cart";
 
 export function CartProvider({ children }) {
-  // Only { id, quantity } is stored; names, prices and photos always come from dishes.js.
-  const [lines, setLines] = useState([]);
-  const [ready, setReady] = useState(false);
+  const [items, setItems] = useState([]);
 
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      if (Array.isArray(saved)) setLines(saved);
-    } catch {}
-    setReady(true);
-  }, []);
-
-  useEffect(() => {
-    if (!ready) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(lines));
-    } catch {}
-  }, [lines, ready]);
-
-  const addItem = (dish, quantity = 1) => {
-    setLines((prev) => {
-      const existing = prev.find((l) => l.id === dish.id);
+  const addItem = useCallback((dish) => {
+    setItems((prevItems) => {
+      const existing = prevItems.find((item) => item.id === dish.id);
       if (existing) {
-        return prev.map((l) =>
-          l.id === dish.id ? { ...l, quantity: l.quantity + quantity } : l
+        return prevItems.map((item) =>
+          item.id === dish.id
+            ? { ...item, quantity: (item.quantity || 1) + 1 }
+            : item
         );
       }
-      return [...prev, { id: dish.id, quantity }];
+      return [...prevItems, { ...dish, quantity: 1 }];
     });
-  };
+  }, []);
 
-  const setQuantity = (id, quantity) => {
-    setLines((prev) =>
-      quantity <= 0
-        ? prev.filter((l) => l.id !== id)
-        : prev.map((l) => (l.id === id ? { ...l, quantity } : l))
-    );
-  };
+  const removeItem = useCallback((id) => {
+    setItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  }, []);
 
-  const removeItem = (id) => setLines((prev) => prev.filter((l) => l.id !== id));
-  const clearCart = () => setLines([]);
+  const clearCart = useCallback(() => {
+    setItems((prevItems) => (prevItems.length === 0 ? prevItems : []));
+  }, []);
 
-  const value = useMemo(() => {
-    const items = lines
-      .map((l) => {
-        const dish = dishes.find((d) => d.id === l.id);
-        return dish ? { ...dish, quantity: l.quantity } : null;
-      })
-      .filter(Boolean);
-    const count = items.reduce((n, i) => n + i.quantity, 0);
-    const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-    const delivery = items.length ? DELIVERY_FEE : 0;
-    return {
-      items,
-      count,
-      subtotal,
-      delivery,
-      total: subtotal + delivery,
-      ready,
-      addItem,
-      setQuantity,
-      removeItem,
-      clearCart,
-    };
-  }, [lines, ready]);
+  const value = useMemo(
+    () => ({ items, addItem, removeItem, clearCart }),
+    [items, addItem, removeItem, clearCart]
+  );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 
 export function useCart() {
   const context = useContext(CartContext);
-  if (!context) throw new Error("useCart must be used within a CartProvider");
+  if (!context) {
+    throw new Error("useCart must be used within a CartProvider");
+  }
   return context;
 }

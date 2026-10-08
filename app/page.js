@@ -1,237 +1,317 @@
 import Link from "next/link";
-import dishes, { categories, popularDishes } from "./data/dishes";
-import SmartImage from "./components/SmartImage";
-import DishCard from "./components/DishCard";
-import CartPanel from "./components/CartPanel";
-import { ArrowIcon, BikeIcon, BowlIcon, HeartHandIcon, LeafIcon } from "./components/Icons";
+import Image from "next/image";
+import dishes from "./data/dishes";
+import AddToCartButton from "./menu/AddToCartButton";
 
-const features = [
-  { icon: BowlIcon, title: "Authentic recipes", text: "Passed down for generations" },
-  { icon: LeafIcon, title: "Fresh ingredients", text: "Locally sourced every day" },
-  { icon: BikeIcon, title: "Fast delivery", text: "Direct to your door in Addis" },
-];
+export const metadata = {
+  title: "Authentic Ethiopian Food & Delivery",
+  description: "Experience the true taste of Ethiopia with authentic traditional dishes delivered fresh to your doorstep.",
+};
 
 export default function HomePage() {
-  const moreDishes = dishes.filter((d) => !d.popular).slice(0, 3);
+  const featuredDishes = [
+    dishes.find((d) => d.name === "Doro Wat") || dishes[1],
+    dishes.find((d) => d.name === "Tibs") || dishes[3],
+    dishes.find((d) => d.name === "Shiro") || dishes[5],
+    dishes.find((d) => d.name === "Kitfo") || dishes[0],
+  ];
 
   return (
-    <div className=" bg-white ">
-      {/* Hero Section */}
-      <section className=" relative isolate overflow-hidden border-b border-gray-100 bg-white">
-        
-        <SmartImage
-          src="https://tse3.mm.bing.net/th/id/OIP.jVMTts7fOWeg750kJ7q8OwHaFW?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
-          alt="View over the city of Addis Ababa"
-          priority
-          className="absolute inset-0 -z-20 h-full w-full object-cover opacity-25"
-        />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-white via-white/92 to-white/70" />
-        <div className="absolute inset-0 -z-10 bg-gradient-to-t from-white via-transparent to-white/50" />
+    <div className="min-h-screen bg-[#111111] text-white">
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#181411] via-[#14110f] to-[#100e0d] border-b border-[#25201c] pt-12 pb-20 lg:py-24">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-600/10 via-transparent to-transparent pointer-events-none" />
 
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 pb-12 pt-16 lg:grid-cols-[1.05fr_1fr] lg:pt-24">
-          <div>
-            
-            <h1 className="hero-rise hero-rise-2 mt-4 font-display text-5xl font-bold tracking-tight text-gray-950 sm:text-6xl lg:text-7xl">
-              Addis <span className="text-amber-600">Eats</span>
-            </h1>
-            <p className="hero-rise hero-rise-2 mt-3 font-display text-2xl font-medium text-gray-800 sm:text-3xl">
-              Taste the real Ethiopia
-            </p>
-            <p className="hero-rise hero-rise-3 mt-4 max-w-md text-base leading-relaxed text-gray-600">
-              From spongy injera to rich, spiced doro wat and sizzling tibs, experience genuine Habesha culinary culture made with love and time-honored tradition.
-            </p>
-            <div className="hero-rise hero-rise-3 mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/menu"
-                className="inline-flex items-center gap-2 rounded-full bg-amber-600 px-7 py-3.5 font-semibold text-white shadow-sm transition hover:bg-amber-700"
-              >
-                Order now <ArrowIcon width={17} height={17} />
-              </Link>
-              <Link
-                href="/menu"
-                className="inline-flex items-center rounded-full border border-gray-300 bg-white px-7 py-3.5 font-semibold text-gray-700 shadow-2xs transition hover:border-amber-500 hover:text-amber-600"
-              >
-                Explore menu
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative mx-auto w-full max-w-md lg:max-w-none">
-       
-            <div className="relative aspect-square w-full overflow-hidden rounded-full border-4 border-amber-500 shadow-xl">
-              <SmartImage
-                src="/images/hero-plate.jpg"
-                alt="Doro wat and traditional Ethiopian dishes served on injera"
-                priority
-                className="h-full w-full object-cover"
-              />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 rounded-full dish-inner-shadow"
-              />
-            </div>
-            <div className="absolute -bottom-2 right-2 rounded-2xl border border-gray-200 bg-white/95 px-5 py-3 shadow-lg backdrop-blur sm:right-6">
-              <p className="font-display text-lg font-bold text-amber-700">Ethiopia&apos;s national dish</p>
-             
-            </div>
-          </div>
-        </div>
-
-        {/* Feature Highlights */}
-        <ul className="mx-auto flex max-w-7xl flex-wrap gap-x-10 gap-y-4 px-5 pb-10">
-          {features.map(({ icon: Icon, title, text }) => (
-            <li key={title} className="flex items-center gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-full border border-amber-200 bg-amber-50 text-amber-700 shadow-2xs">
-                <Icon width={20} height={20} />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            <div className="lg:col-span-6 flex flex-col items-start text-left">
+              <span className="text-amber-500 font-semibold text-xs tracking-[0.25em] uppercase mb-4">
+                Traditional Flavors, Modern Convenience
               </span>
-              <span>
-                <span className="block text-sm font-semibold text-gray-900">{title}</span>
-                <span className="block text-xs text-gray-500">{text}</span>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
 
-    
-      <section className="mx-auto max-w-7xl px-5 py-14">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
-          <div>
-            <div className="flex items-end justify-between border-b border-gray-100 pb-4">
-              <div>
-                <h2 className="font-display text-3xl font-bold text-gray-900">Popular dishes</h2>
-                <p className="mt-1 text-sm text-gray-500">Our most requested authentic favorites</p>
-              </div>
-              <Link
-                href="/menu"
-                className="inline-flex items-center gap-1 text-sm font-semibold text-amber-700 hover:text-amber-800 hover:underline"
-              >
-                View all <ArrowIcon width={16} height={16} />
-              </Link>
-            </div>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15] mb-6 font-serif-display">
+                Experience the <br />
+                True Taste of <br />
+                <span className="font-script text-amber-400 text-6xl sm:text-7xl lg:text-8xl italic block -mt-1 font-normal">
+                  Ethiopia
+                </span>
+              </h1>
 
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-              {popularDishes.map((dish) => (
-                <DishCard key={dish.id} dish={dish} />
-              ))}
-            </div>
+              <p className="text-zinc-300 text-base sm:text-lg leading-relaxed max-w-xl mb-8">
+                From our traditional recipes to your table. We bring the rich flavors
+                of Ethiopian cuisine straight to you, fresh, authentic, and always
+                made with love.
+              </p>
 
-         
-            <div className="relative mt-10 overflow-hidden rounded-2xl border border-gray-200 shadow-xs">
-              <SmartImage
-                src="/images/story-food.jpg"
-                alt="A shared Ethiopian beyaynetu platter"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 to-transparent sm:w-3/4" />
-              <div className="relative max-w-md p-8 sm:p-10">
-                <p className="text-xs font-bold tracking-[0.25em] text-amber-700">TASTE THE TRADITION</p>
-                <h3 className="mt-2 font-display text-3xl font-bold leading-tight text-gray-950">
-                  More than just food
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-600">
-                  A culture of hospitality, sharing, and centuries-old recipes brought to life in every single bite.
-                </p>
+              <div className="flex flex-wrap items-center gap-4 mb-10">
                 <Link
-                  href="/about"
-                  className="mt-5 inline-flex items-center gap-2 rounded-full bg-amber-600 px-6 py-3 text-sm font-semibold text-white shadow-xs transition hover:bg-amber-700"
+                  href="/menu"
+                  className="bg-[#e59e2a] hover:bg-[#d48e1d] text-zinc-950 font-bold px-7 py-3 rounded-full inline-flex items-center gap-2 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  Our story <ArrowIcon width={16} height={16} />
+                  <span>Order Now</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </Link>
+
+                <Link
+                  href="/menu"
+                  className="border border-zinc-600 hover:border-amber-400 text-white hover:text-amber-400 font-medium px-7 py-3 rounded-full transition-all bg-black/30 backdrop-blur-sm"
+                >
+                  View Menu
                 </Link>
               </div>
-            </div>
-          </div>
 
-          {/* Sticky Cart Panel */}
-          <div className="lg:sticky lg:top-24 lg:self-start">
-            <CartPanel />
+              <div className="flex items-center gap-2">
+                <span className="w-6 h-2 bg-amber-500 rounded-full" />
+                <span className="w-2 h-2 bg-zinc-600 rounded-full" />
+                <span className="w-2 h-2 bg-zinc-600 rounded-full" />
+              </div>
+            </div>
+
+            <div className="lg:col-span-6 relative flex items-center justify-center">
+              <div className="relative w-full max-w-lg lg:max-w-none aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-zinc-800/80 bg-zinc-900 group">
+                <Image
+                  src="/images/hero.jpg"
+                  alt="Authentic Ethiopian Food Feast"
+                  fill
+                  priority
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+                <div className="absolute top-6 right-6 text-right select-none pointer-events-none">
+                  <div className="font-script text-white text-2xl sm:text-3xl leading-snug drop-shadow-md -rotate-6">
+                    Good Food <br />
+                    Brings People <br />
+                    Together
+                    <span className="inline-block ml-1">
+                      <svg className="w-5 h-5 inline-block text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Menu Categories & Highlights */}
-      <section className="mx-auto max-w-7xl px-5 pb-16">
-        <div className="grid gap-8 lg:grid-cols-[240px_minmax(0,1fr)]">
-          <nav aria-label="Menu categories" className="h-fit rounded-2xl border border-gray-200 bg-gray-50/70 p-4 shadow-2xs">
-            <h2 className="px-2 pb-3 font-display text-lg font-bold text-gray-900">
-              Menu categories
-            </h2>
-            <ul className="space-y-1">
-              {categories.map((c, i) => (
-                <li key={c}>
-                  <Link
-                    href={i === 0 ? "/menu" : `/menu?category=${encodeURIComponent(c)}`}
-                    className={`block rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                      i === 0
-                        ? "bg-amber-600 font-semibold text-white shadow-xs"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-amber-700"
-                    }`}
-                  >
-                    {c}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
+      <section className="bg-white text-zinc-900 py-10 border-b border-zinc-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-700 shrink-0">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21V3m0 0a9.004 9.004 0 018.716 6.747M12 3a9.004 9.004 0 00-8.716 6.747" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-zinc-900 leading-snug">Fresh & Authentic</h2>
+                <p className="text-zinc-500 text-xs sm:text-sm mt-0.5">
+                  Traditional recipes, fresh ingredients, real Ethiopian flavors.
+                </p>
+              </div>
+            </div>
 
-          <div>
-            <h2 className="font-display text-3xl font-bold text-gray-900">All dishes</h2>
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-              {moreDishes.map((dish) => (
-                <DishCard key={dish.id} dish={dish} />
-              ))}
-              <Link
-                href="/menu"
-                className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-gray-300 bg-gray-50/50 p-6 text-center transition hover:border-amber-500 hover:bg-amber-50/40"
-              >
-                <span className="font-display text-xl font-bold text-gray-900">See the full menu</span>
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-amber-600 text-white shadow-xs">
-                  <ArrowIcon width={18} height={18} />
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-700 shrink-0">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-zinc-900 leading-snug">Fast Delivery</h2>
+                <p className="text-zinc-500 text-xs sm:text-sm mt-0.5">
+                  Your favorite dishes, delivered hot and fresh.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-700 shrink-0">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-zinc-900 leading-snug">Secure Payments</h2>
+                <p className="text-zinc-500 text-xs sm:text-sm mt-0.5">
+                  Pay safely and easily with multiple options.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-700 shrink-0">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.8">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-zinc-900 leading-snug">Customer Care</h2>
+                <p className="text-zinc-500 text-xs sm:text-sm mt-0.5">
+                  We are here to make your experience great.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#f8f7f5] text-zinc-900 py-16 lg:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-amber-700 font-bold text-xs tracking-widest uppercase">
+                  Popular Dishes
                 </span>
-              </Link>
+                <span className="w-8 h-[2px] bg-amber-600 inline-block" />
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-zinc-900 tracking-tight font-serif-display">
+                Our Signature Dishes
+              </h2>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* About Section */}
-      <section className="mx-auto max-w-7xl px-5 pb-16">
-        <div className="grid overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 shadow-xs md:grid-cols-[1.2fr_1fr]">
-          <div className="p-8 sm:p-10">
-            <h2 className="font-display text-3xl font-bold text-gray-900">About Addis Eats</h2>
-            <p className="mt-4 max-w-lg leading-relaxed text-gray-600">
-              Addis Eats brings you the authentic taste of Ethiopia. We use fresh, local ingredients and traditional recipes to give you a true Habesha dining experience, wherever you are.
-            </p>
-            <ul className="mt-6 flex flex-wrap gap-6 text-sm">
-              {[
-                [BowlIcon, "Authentic flavors"],
-                [LeafIcon, "Quality ingredients"],
-                [HeartHandIcon, "Warm hospitality"],
-              ].map(([Icon, label]) => (
-                <li key={label} className="flex items-center gap-2 font-medium text-gray-700">
-                  <span className="grid h-9 w-9 place-items-center rounded-full border border-amber-200 bg-amber-50 text-amber-700">
-                    <Icon width={17} height={17} />
-                  </span>
-                  {label}
-                </li>
-              ))}
-            </ul>
             <Link
-              href="/about"
-              className="mt-7 inline-flex items-center gap-2 rounded-full border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-800 shadow-2xs transition hover:border-amber-500 hover:text-amber-700"
+              href="/menu"
+              className="text-amber-700 hover:text-amber-800 font-bold text-sm flex items-center gap-1 transition-colors"
             >
-              Learn more <ArrowIcon width={16} height={16} />
+              <span>View All Menu</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
             </Link>
           </div>
-          <div className="relative min-h-64 overflow-hidden border-t border-gray-200 md:border-l md:border-t-0">
-            <SmartImage
-              src="/images/city-skyline.jpg"
-              alt="Addis Ababa skyline"
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-x-0 bottom-0">
-              <div className="tibeb" aria-hidden="true" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featuredDishes.map((dish) => (
+              <div
+                key={dish.id}
+                className="bg-white rounded-2xl overflow-hidden border border-zinc-200/80 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group"
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-zinc-100">
+                  <Image
+                    src={dish.image}
+                    alt={dish.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {dish.badge && (
+                    <span className="absolute top-3 left-3 bg-amber-500 text-zinc-950 font-bold text-xs px-2.5 py-1 rounded-full shadow-md">
+                      {dish.badge}
+                    </span>
+                  )}
+                </div>
+
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="text-lg font-bold text-zinc-900 mb-1 font-serif-display">
+                    {dish.name}
+                  </h3>
+                  <p className="text-zinc-500 text-xs leading-relaxed mb-4 line-clamp-2">
+                    {dish.description}
+                  </p>
+
+                  <div className="mt-auto flex items-center justify-between mb-4">
+                    <span className="text-[#0c433b] font-bold text-base">
+                      ETB {dish.price}
+                    </span>
+                    <div className="flex items-center gap-1 text-xs">
+                      <svg className="w-3.5 h-3.5 text-amber-500 fill-current" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span className="font-bold text-zinc-800">{dish.rating}</span>
+                      <span className="text-zinc-400">({dish.reviews})</span>
+                    </div>
+                  </div>
+
+                  <AddToCartButton dish={dish} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-14 bg-[#0f2e24] rounded-3xl overflow-hidden border border-emerald-900/40 shadow-2xl">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center p-8 sm:p-12">
+              <div className="lg:col-span-7 text-left">
+                <span className="text-amber-400 font-bold text-xs tracking-widest uppercase">
+                  Special Offers
+                </span>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mt-2 mb-4 font-serif-display leading-tight">
+                  Taste the Real Ethiopia
+                </h2>
+                <p className="text-emerald-100/80 text-sm sm:text-base leading-relaxed mb-6 max-w-lg">
+                  Order now and enjoy authentic Ethiopian flavors from the comfort of
+                  your home.
+                </p>
+                <Link
+                  href="/menu"
+                  className="bg-[#e59e2a] hover:bg-[#d48e1d] text-zinc-950 font-bold px-7 py-3 rounded-full inline-flex items-center gap-2 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span>Order Now</span>
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </Link>
+              </div>
+
+              <div className="lg:col-span-5 relative">
+                <div className="relative aspect-[16/10] rounded-2xl overflow-hidden shadow-xl border border-emerald-800/40">
+                  <Image
+                    src="/images/banner.jpg"
+                    alt="Authentic Ethiopian Culinary Experience"
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+                  <div className="absolute bottom-4 right-4 text-right pointer-events-none">
+                    <div className="font-script text-white text-xl sm:text-2xl drop-shadow-md leading-tight -rotate-3">
+                      Authentic Food <br />
+                      Authentic Experience
+                      <span className="inline-block ml-1">
+                        <svg className="w-4 h-4 inline-block text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-[#181310] border-t border-[#2a221c] py-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-4 text-left">
+              <div className="w-12 h-12 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500 shrink-0">
+                <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 3c0-1 1-1.5 2-1.5h4c1 0 2 .5 2 1.5" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-base sm:text-lg font-bold text-white leading-tight">
+                  Craving Ethiopian Food?
+                </h3>
+                <p className="text-amber-200/70 text-xs sm:text-sm mt-0.5">
+                  Order now and enjoy a delicious meal, right at your doorstep.
+                </p>
+              </div>
+            </div>
+
+            <Link
+              href="/menu"
+              className="bg-[#e59e2a] hover:bg-[#d48e1d] text-zinc-950 font-bold px-7 py-2.5 rounded-full text-sm inline-flex items-center gap-2 shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] shrink-0"
+            >
+              <span>Order Now</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </Link>
           </div>
         </div>
       </section>

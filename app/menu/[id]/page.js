@@ -1,102 +1,150 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
-import dishes, { getDish } from "../../data/dishes";
-import SmartImage from "../../components/SmartImage";
-import DishCard, { SpiceLevel } from "../../components/DishCard";
-import { ClockIcon } from "../../components/Icons";
-import { formatETB } from "../../lib/format";
-import DishOrder from "./DishOrder";
+import dishes from "../../data/dishes";
+import AddToCartButton from "../AddToCartButton";
 
 export async function generateStaticParams() {
-  return dishes.map((dish) => ({ id: dish.id.toString() }));
+  return dishes.map((dish) => ({
+    id: dish.id.toString(),
+  }));
 }
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  const dish = getDish(id);
-  return dish ? { title: `${dish.name} | Addis Eats`, description: dish.description } : {};
+  const dish = dishes.find((d) => d.id.toString() === id);
+
+  if (!dish) {
+    return {
+      title: "Dish Not Found",
+      description: "The requested Ethiopian dish could not be found.",
+    };
+  }
+
+  return {
+    title: `${dish.name} - Traditional Ethiopian Dish`,
+    description: dish.description,
+    openGraph: {
+      title: `${dish.name} | Addis Eats`,
+      description: dish.description,
+      images: [
+        {
+          url: dish.image,
+          width: 800,
+          height: 600,
+          alt: dish.name,
+        },
+      ],
+    },
+  };
 }
 
 export default async function DishDetails({ params }) {
   const { id } = await params;
-  const dish = getDish(id);
-  if (!dish) notFound();
+  const dish = dishes.find((d) => d.id.toString() === id);
 
-  const related = dishes.filter((d) => d.category === dish.category && d.id !== dish.id).slice(0, 4);
+  if (!dish) {
+    notFound();
+  }
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "MenuItem",
+    name: dish.name,
+    description: dish.description,
+    image: `https://addiseats.com${dish.image}`,
+    offers: {
+      "@type": "Offer",
+      price: dish.price,
+      priceCurrency: "ETB",
+      availability: "https://schema.org/InStock",
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: dish.rating || 4.8,
+      reviewCount: dish.reviews || 80,
+    },
+  };
 
   return (
-    <div className="bg-white">
-      {/* Breadcrumb Navigation */}
-      <nav aria-label="Breadcrumb" className="text-sm font-medium text-gray-500">
-        <Link href="/menu" className="transition hover:text-amber-600">
-          Menu
-        </Link>{" "}
-        / <span className="text-gray-900">{dish.name}</span>
-      </nav>
+    <div className="max-w-4xl mx-auto py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-      <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center">
-        {/* Dish image with inner gray shadow looking inside */}
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 shadow-md">
-          <SmartImage
-            src={dish.image}
-            alt={`${dish.name}, served on injera`}
+      <Link
+        href="/menu"
+        className="inline-flex items-center gap-2 text-zinc-400 hover:text-amber-400 text-sm mb-6 transition-colors"
+      >
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        <span>Back to Menu</span>
+      </Link>
+
+      <div className="bg-[#181615] rounded-3xl shadow-2xl overflow-hidden border border-[#2b2724] grid grid-cols-1 md:grid-cols-12">
+        <div className="md:col-span-6 relative min-h-[300px] md:min-h-[420px] bg-zinc-900">
+          <Image
+            src={dish.image || "/images/banner.jpg"}
+            alt={dish.name}
+            fill
             priority
-            className="h-full w-full object-cover"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
           />
-          {/* Gray inner shadow */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 rounded-2xl dish-inner-shadow"
-          />
+          {dish.badge && (
+            <span className="absolute top-4 left-4 bg-amber-500 text-zinc-950 font-bold text-xs px-3 py-1 rounded-full shadow-lg">
+              {dish.badge}
+            </span>
+          )}
         </div>
 
-        <div className="self-center">
-          <span className="inline-block rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-700">
-            {dish.category}
-          </span>
-          <h1 className="mt-3 font-display text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl">
-            {dish.name}
-          </h1>
-          <p className="mt-1 text-xl font-medium text-amber-700" lang="am">
-            {dish.amharic}
-          </p>
-          <p className="mt-5 max-w-lg text-base leading-relaxed text-gray-600">
-            {dish.description}
-          </p>
-
-          <dl className="mt-6 flex flex-wrap gap-8 border-y border-gray-100 py-4 text-sm">
-            <div>
-              <dt className="font-medium text-gray-500">Spice Level</dt>
-              <dd className="mt-1">
-                <SpiceLevel level={dish.spice} />
-              </dd>
+        <div className="md:col-span-6 p-8 lg:p-10 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <span className="bg-[#24201d] text-amber-400 border border-amber-500/30 px-3.5 py-1 rounded-full text-xs font-semibold">
+                {dish.category}
+              </span>
+              <div className="flex items-center gap-1.5 text-sm text-amber-400">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                <span className="font-bold text-zinc-200">{dish.rating || "4.8"}</span>
+                <span className="text-zinc-500 text-xs">({dish.reviews || 80} reviews)</span>
+              </div>
             </div>
-            <div>
-              <dt className="font-medium text-gray-500">Preparation Time</dt>
-              <dd className="mt-1 flex items-center gap-1.5 font-medium text-gray-800">
-                <ClockIcon width={16} height={16} className="text-amber-600" />
-                {dish.prep}
-              </dd>
-            </div>
-          </dl>
 
-          <p className="mt-6 font-display text-3xl font-bold text-amber-600">
-            {formatETB(dish.price)}
-          </p>
-          <DishOrder dish={dish} />
+            <h1 className="text-3xl lg:text-4xl font-extrabold text-white mb-4 font-serif-display">
+              {dish.name}
+            </h1>
+
+            <p className="text-zinc-300 leading-relaxed text-sm lg:text-base mb-6">
+              {dish.description}
+            </p>
+
+            <div className="py-4 border-y border-[#292522] mb-8 flex items-baseline gap-2">
+              <span className="text-3xl font-bold text-amber-500">
+                ETB {dish.price}
+              </span>
+              <span className="text-xs text-zinc-400">including tax and fresh injera</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1">
+              <AddToCartButton dish={dish} />
+            </div>
+
+            <Link
+              href="/cart"
+              className="text-center bg-zinc-800 hover:bg-zinc-700 text-zinc-200 px-6 py-2.5 rounded-lg font-medium text-sm transition border border-zinc-700 flex items-center justify-center gap-2"
+            >
+              <span>View Cart</span>
+            </Link>
+          </div>
         </div>
       </div>
-
-      {related.length > 0 && (
-        <section className="mt-20 border-t border-gray-100 pt-12">
-          <h2 className="font-display text-3xl font-bold text-gray-900">You may also like</h2>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {related.map((d) => (
-              <DishCard key={d.id} dish={d} />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }
