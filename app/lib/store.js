@@ -1,8 +1,39 @@
 import "server-only";
 import dishes from "../data/dishes";
+import initialSeedOrders from "./seedOrders";
 
-globalThis.__addisEatsDb ??= { orders: [], nextId: 1001 };
+const knownNeighbourhoods = [
+  "Bole",
+  "Kazanchis",
+  "Piazza",
+  "Sarbet",
+  "CMC",
+  "Kirkos",
+  "Gerji",
+  "Arada",
+  "Yeka",
+  "Lideta"
+];
+
+export function extractNeighbourhood(address) {
+  if (!address || typeof address !== "string") return "Bole";
+  const found = knownNeighbourhoods.find((n) =>
+    address.toLowerCase().includes(n.toLowerCase())
+  );
+  return found || "Bole";
+}
+
+globalThis.__addisEatsDb ??= {
+  orders: [...initialSeedOrders],
+  nextId: 1033
+};
+
 const db = globalThis.__addisEatsDb;
+
+if (!db.orders || db.orders.length === 0) {
+  db.orders = [...initialSeedOrders];
+  db.nextId = 1033;
+}
 
 export function listDishes(category) {
   if (!category || category === "All") return dishes;
@@ -34,12 +65,14 @@ export function insertOrder({ userId, name, phone, address, note, items }) {
     const dish = findDish(dishId);
     return { dishId, name: dish.name, price: dish.price, quantity };
   });
+  const neighbourhood = extractNeighbourhood(address);
   const order = {
     id: `ORD-${db.nextId++}`,
     userId,
     name,
     phone,
     address,
+    neighbourhood,
     note: note ?? "",
     items: lines,
     total: lines.reduce((sum, l) => sum + l.price * l.quantity, 0),
