@@ -21,7 +21,7 @@ export function middleware(request) {
   }
 
   const isProtected =
-    pathname.startsWith("/orders") ||
+    (pathname.startsWith("/orders") && !pathname.includes("/track")) ||
     pathname.startsWith("/checkout") ||
     pathname.startsWith("/kitchen");
 

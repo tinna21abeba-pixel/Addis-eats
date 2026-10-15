@@ -21,3 +21,17 @@
 .font-serif-display {
   font-family: var(--font-playfair), Georgia, serif;
 }
+
+:focus-visible {
+  outline: 2px solid #e59e2a;
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #e59e2a;
+  outline-offset: 2px;
+}

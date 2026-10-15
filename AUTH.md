@@ -51,17 +51,17 @@
 ### Attack 1: Signed Out Cancellation
 - Command: `await cancelOrder("ORD-1001")`
 - Expected: Refused (401 UNAUTHENTICATED)
-- Enforcement Point: `app/lib/orders.js:37` (`if (!session)`)
+- Enforcement Point: `app/lib/orders.js:40` (`if (!session)`)
 - Outcome: Request blocked.
 
 ### Attack 2: Cross-Account Cancellation (Signed in as someone else)
 - Command: `await cancelOrder("ORD-9999")`
 - Expected: Refused on ownership (403 FORBIDDEN)
-- Enforcement Point: `app/lib/orders.js:46` (`if (order.userId !== session.userId)`)
+- Enforcement Point: `app/lib/orders.js:49` (`if (order.userId !== session.userId)`)
 - Outcome: Request blocked.
 
 ### Attack 3: Open Redirect via Crafted Sign-In Link
 - URL: `/signin?next=https://example.com`
 - Expected: Lands on `/`, not away
-- Enforcement Point: `middleware.js:3` and `app/actions.js:8` (`sanitizeNext(next)`)
+- Enforcement Point: `middleware.js:3` and `app/actions.js:7` (`sanitizeNext(next)`)
 - Outcome: Protocol and absolute URLs rejected; redirects safely to `/`.
