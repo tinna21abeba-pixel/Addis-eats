@@ -6,7 +6,7 @@ const initialSeedOrders = [
     phone: "0911223344",
     address: "Bole, Ring Road Area",
     neighbourhood: "Bole",
-    note: "Call on arrival",
+    note: "Extra spicy, with \"special\" berbere and butter.\nCall upon arrival",
     items: [
       { dishId: 1, name: "Kitfo", price: 350, quantity: 2 },
       { dishId: 2, name: "Doro Wat", price: 400, quantity: 1 }

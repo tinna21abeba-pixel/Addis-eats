@@ -23,6 +23,7 @@ export default function Header() {
     { name: "Home", href: "/" },
     { name: "Menu", href: "/menu" },
     { name: "Orders", href: "/orders" },
+    { name: "Tracking", href: "/tracking" },
     { name: "Kitchen", href: "/kitchen" },
     { name: "Dashboard", href: "/dashboard" },
   ];

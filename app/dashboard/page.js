@@ -36,7 +36,20 @@ export default async function DashboardPage({ searchParams }) {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs">
+        <div className="flex items-center gap-2 text-xs flex-wrap">
+          <a
+            href="/api/orders/export"
+            download="addis-eats-orders.csv"
+            className="px-3.5 py-2 rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 font-medium transition"
+          >
+            Export CSV
+          </a>
+          <Link
+            href="/tracking"
+            className="px-3.5 py-2 rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 font-medium transition"
+          >
+            Live Tracking
+          </Link>
           <Link
             href="/orders"
             className="px-3.5 py-2 rounded-lg border border-zinc-700 bg-zinc-800 text-zinc-300 hover:text-white hover:bg-zinc-700 font-medium transition"

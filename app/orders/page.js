@@ -35,15 +35,21 @@ export default async function OrdersPage() {
           </p>
         </div>
 
-        <Link
-          href="/menu"
-          className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 font-semibold text-sm transition-colors"
-        >
-          <span>Order more</span>
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </Link>
+        <div className="flex items-center gap-3">
+          <a
+            href="/api/orders/export"
+            download="addis-eats-orders.csv"
+            className="text-xs text-zinc-300 hover:text-white px-3 py-1.5 rounded border border-zinc-700 bg-zinc-800 transition"
+          >
+            Export Order History (CSV)
+          </a>
+          <Link
+            href="/menu"
+            className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 font-semibold text-sm transition-colors"
+          >
+            <span>Order more</span>
+          </Link>
+        </div>
       </div>
 
       <OrdersList initialOrders={orders} />
